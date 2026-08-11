@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(.\\\\mvnw.cmd -o clean compile 2>&1)"
+    ]
+  }
+}

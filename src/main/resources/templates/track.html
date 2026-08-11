@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Status</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .queue-number {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .status-WAITING {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-CALLED {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-IN_SERVICE {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-COMPLETED {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .message-box {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .people-ahead {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            color: #764ba2;
+            margin: 15px 0;
+        }
+
+        .refresh-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .auto-refresh {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Queue Status</h1>
+
+        <div class="status-card">
+            <div class="status-badge" th:classappend="'status-' + ${status.status}">
+                <span th:text="${status.status}">WAITING</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Name:</span>
+                <span class="info-value" th:text="${status.userName}">John Doe</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Tracking Number:</span>
+                <span class="info-value" th:text="${status.trackingNumber}">QMS-123456</span>
+            </div>
+
+            <div class="queue-number" th:text="${status.queueNumber}">42</div>
+            <p style="text-align: center; color: #666; margin-top: -10px;">Your Queue Number</p>
+
+            <div th:if="${status.status.name() == 'WAITING'}">
+                <p style="text-align: center; color: #666; margin-top: 20px; margin-bottom: 5px;">People ahead of you</p>
+                <div class="people-ahead" th:text="${status.peopleAhead}">5</div>
+            </div>
+        </div>
+
+        <div class="message-box">
+            <p th:text="${status.message}">You are in the queue. Please wait for your turn.</p>
+        </div>
+
+        <button class="refresh-btn" onclick="location.reload()">🔄 Refresh Status</button>
+        <p class="auto-refresh">Page auto-refreshes every 30 seconds</p>
+    </div>
+
+    <script th:inline="javascript">
+        // Auto-refresh every 30 seconds
+        setTimeout(() => {
+            location.reload();
+        }, 30000);
+
+        // Check if service is completed
+        const status = /*[[${status.status}]]*/ 'WAITING';
+        if (status === 'COMPLETED') {
+            // Stop auto-refresh if completed
+            console.log('Service completed - auto-refresh stopped');
+        }
+    </script>
+</body>
+</html>
